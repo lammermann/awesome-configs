@@ -51,7 +51,7 @@ local sharetags = require("sharetags")
 
 -- {{{ Variable definitions
 -- This is used later as the default terminal and editor to run.
-terminal   = "urxvt"
+terminal   = "xterm"
 editor     = os.getenv("EDITOR") or "vim"
 home_dir   = os.getenv("HOME")
 user       = os.getenv("USER")
@@ -107,8 +107,8 @@ end
 -- Define a tag table which hold all screen tags.
 tags = {
         names = { "main", "www", "office", "virtual", "eda", "cad", "screen", "media", 9 },
-        layout = { layouts[2], layouts[4], layouts[1], layouts[2], layouts[12], 
-                   layouts[4], layouts[11], layouts[2], layouts[1]  
+        layout = { layouts[2], layouts[4], layouts[1], layouts[2], layouts[12],
+                   layouts[4], layouts[11], layouts[2], layouts[1]
         }}
 tags = sharetags.create_tags(tags.names, tags.layout)
 -- Set a greate mwfactor for www tag
@@ -133,7 +133,7 @@ myawesomemenu = awful.menu({ items = {
    }
 })
 
-myappmenu = awful.menu({ items = freedesktop_menu.new() }) 
+myappmenu = awful.menu({ items = freedesktop_menu.new() })
 mymainmenu = awful.menu({ items = { { "luakit", "luakit"},
                                     { "ranger", terminal .. " -e ranger"},
                                     { "Neustarten", "sudo shutdown -r now" },
@@ -148,7 +148,7 @@ menubar.utils.terminal = terminal -- Set the terminal for applications that requ
 -- {{{ Wibox
 -- Create a textclock widget
 mytextclock = awful.widget.textclock()
- 
+
 -- {{{ Reusable separator
 separator = wibox.widget.imagebox()
 separator:set_image(conf_dir .. "/icons/separator.png")
@@ -274,8 +274,8 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
-    --mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
-    mytaglist[s] = sharetags.taglist_new(s, sharetags.filter_all, mytaglist.buttons)
+    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+    --mytaglist[s] = sharetags.taglist_new(s, sharetags.filter_all, mytaglist.buttons)
 
     -- Create a tasklist widget
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
@@ -490,6 +490,10 @@ keychains.add( { modkey }, "x", "utils", "", {
     func = function () myappmenu:show({keygrabber = true}) end,
     info = "Applications Menu"
   },
+  [" "] = {
+    func = function () myappmenu:show({keygrabber = true}) end,
+    info = "Applications Menu"
+  },
   m = {
     func = function () myappmenu:show({keygrabber = true}) end,
     info = "Applications Menu"
@@ -529,10 +533,10 @@ awful.rules.rules = {
     { rule_any = { class = {"Pcb", "PCB"} },
       properties = { tag = tags[5]} },
     -- Place Freecad always on tag "cad"
-    { rule = { class = "Freecad" },
+    { rule_any = { class = {"Freecad", "Blender"} },
       properties = { tag = tags[6]} },
     -- Set Firefox to always map on tags number 2
-    { rule_any = { class = {"Chromium", "luakit", "Zathura"} },
+    { rule_any = { class = {"chromium", "luakit", "Zathura"} },
       properties = { tag = tags[2] } },
     -- Place incskape always on tag "media"
     { rule = { class = "Inkscape" },
@@ -633,11 +637,9 @@ os.execute("~/bin/mouse-settings &")
 
 -- Applets
 os.execute("ps -U " .. user .. " | grep wicd-client >/dev/null || wicd-gtk --tray &")
-os.execute("ps -U " .. user .. " | grep blueman-applet >/dev/null || ( sleep 2; blueman-applet ) &")
 
 -- Bildschirmschoner und Powermanagement
 os.execute("xscreensaver &")
---awful.util.spawn(editor_cmd .. " " .. home_dir .. "/welcome.txt")
 -- }}}
 
 -- vim: fdm=marker:
